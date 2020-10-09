@@ -19,7 +19,11 @@ class LoginPage extends StatelessWidget {
               children: <Widget>[
                 Logo(),
                 Form(),
-                Labels(),
+                Labels(
+                  route: "register",
+                  label: "¿No tienes cuenta?",
+                  text: "Crear una ahora!",
+                ),
                 Text("Terminos y condiciones!",
                     style: TextStyle(fontWeight: FontWeight.w200))
               ],
