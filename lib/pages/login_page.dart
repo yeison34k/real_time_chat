@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:real_time_chat/widgets/custom_buttom.dart';
+import 'package:real_time_chat/widgets/custom_input.dart';
+import 'package:real_time_chat/widgets/labels_login.dart';
+import 'package:real_time_chat/widgets/logo_login.dart';
 
 class LoginPage extends StatelessWidget {
   @override
@@ -6,15 +10,21 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Color(0xffF2f2f2),
       body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            _Logo(),
-            Form(),
-            _Labels(),
-            Text("Terminos y condiciones!",
-                style: TextStyle(fontWeight: FontWeight.w200))
-          ],
+        child: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
+          child: Container(
+            height: MediaQuery.of(context).size.height * 0.9,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Logo(),
+                Form(),
+                Labels(),
+                Text("Terminos y condiciones!",
+                    style: TextStyle(fontWeight: FontWeight.w200))
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -27,6 +37,9 @@ class Form extends StatefulWidget {
 }
 
 class _FormState extends State<Form> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -34,67 +47,22 @@ class _FormState extends State<Form> {
       padding: EdgeInsets.symmetric(horizontal: 30),
       child: Column(
         children: <Widget>[
-          Container(
-              padding: EdgeInsets.only(top: 5, left: 5, bottom: 5, right: 20),
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: <BoxShadow>[
-                    BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        offset: Offset(0, 5),
-                        blurRadius: 5)
-                  ]),
-              child: TextField(
-                autocorrect: false,
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.mail_outline),
-                    focusedBorder: InputBorder.none,
-                    border: InputBorder.none,
-                    hintText: "Email"),
-              )),
-          TextField(),
-          RaisedButton(onPressed: null)
+          CustomInput(
+              icon: Icons.mail_outline,
+              placeholder: "Email",
+              textController: emailController,
+              keyBoardType: TextInputType.emailAddress),
+          CustomInput(
+              icon: Icons.vpn_key,
+              placeholder: "Password",
+              textController: passwordController,
+              isPassword: true,
+              keyBoardType: TextInputType.visiblePassword),
+          CustomButtom(
+            name: "Ingresar",
+            action: () {},
+          )
         ],
-      ),
-    );
-  }
-}
-
-class _Logo extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        child: Column(
-          children: <Widget>[Text("¿No tienes cuenta?")],
-        ),
-      ),
-    );
-  }
-}
-
-class _Labels extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        child: Column(
-          children: <Widget>[
-            Text("¿No tienes cuenta?",
-                style: TextStyle(
-                    color: Colors.black54,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w300)),
-            SizedBox(height: 10),
-            Text("Crear una ahora!",
-                style: TextStyle(
-                    color: Colors.blue[600],
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold)),
-          ],
-        ),
       ),
     );
   }
