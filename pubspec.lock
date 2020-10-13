@@ -117,7 +117,7 @@ packages:
     source: hosted
     version: "2.4.0"
   pull_to_refresh:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: pull_to_refresh
       url: "https://pub.dartlang.org"
