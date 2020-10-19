@@ -17,6 +17,9 @@ environment:
   sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
+  http: ^0.12.2
+  provider:
+  flutter_secure_storage: ^3.3.5
   pull_to_refresh: ^1.6.2
   flutter:
     sdk: flutter
@@ -26,7 +29,6 @@ dependencies:
   cupertino_icons: ^0.1.2
 
 dev_dependencies:
-  pull_to_refresh: ^1.6.2
   flutter_test:
     sdk: flutter
 

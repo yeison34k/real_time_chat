@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
 
 import 'package:real_time_chat/widgets/chat_message.dart';
 

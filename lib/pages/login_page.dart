@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:real_time_chat/helpers/show_alert.dart';
 import 'package:real_time_chat/widgets/custom_buttom.dart';
 import 'package:real_time_chat/widgets/custom_input.dart';
 import 'package:real_time_chat/widgets/labels_login.dart';
 import 'package:real_time_chat/widgets/logo_login.dart';
+
+import 'package:real_time_chat/services/auth_service.dart';
 
 class LoginPage extends StatelessWidget {
   @override
@@ -46,6 +50,9 @@ class _FormState extends State<Form> {
 
   @override
   Widget build(BuildContext context) {
+
+    final authService = Provider.of<AuthService>(context);
+
     return Container(
       margin: EdgeInsets.only(top: 40),
       padding: EdgeInsets.symmetric(horizontal: 30),
@@ -64,7 +71,16 @@ class _FormState extends State<Form> {
               keyBoardType: TextInputType.visiblePassword),
           CustomButtom(
             name: "Ingresar",
-            action: () {},
+            action: authService.authenticate ?  null : () async {
+                FocusScope.of(context).unfocus();
+                bool response = await authService.login(emailController.text.trim(), passwordController.text.trim());
+
+                if(!response) {
+                  showAler(context,"Login no valido!!", "Revisa los datos de ingreso");
+                }
+
+                
+              },
           )
         ],
       ),
