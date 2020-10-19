@@ -78,9 +78,9 @@ class _FormState extends State<Form> {
             name: "Registrar",
             action: () async {
               FocusScope.of(context).unfocus();
-              bool response = await authService.register(nombreController.text.trim(), emailController.text.trim(), passwordController.text.trim());
+              final response = await authService.register(nombreController.text.trim(), emailController.text.trim(), passwordController.text.trim());
               if(!response) {
-                  showAler(context,"Usuario no valido!!", "Revisa los datos de registro");
+                  showAler(context,"Usuario no valido!!", response);
                 } else {
                   Navigator.pushReplacementNamed(context, "users");
                 }

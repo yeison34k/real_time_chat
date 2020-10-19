@@ -30,7 +30,7 @@ class AuthService with ChangeNotifier {
     await storage.delete(key: "token");
   }
 
-  Future<bool> login(String user, String password) async {
+  Future login(String user, String password) async {
     this.authenticate = true;
     final data = {
       'email': user,
@@ -40,7 +40,7 @@ class AuthService with ChangeNotifier {
     return buildDataUser("/login", data);
   }
 
-  Future<bool> register(String name, String user, String password) async {
+  Future register(String name, String user, String password) async {
     this.authenticate = true;
     final data = {
       'nombre': name,
@@ -52,7 +52,7 @@ class AuthService with ChangeNotifier {
   }
 
 
-  Future<bool> buildDataUser(path, data) async {
+  Future buildDataUser(path, data) async {
     final response = await http.post(Environment.api+path, body: jsonEncode(data), headers: {"Content-Type": "application/json"});
     this.authenticate = false;
     if (response.statusCode == 200) {
@@ -60,8 +60,9 @@ class AuthService with ChangeNotifier {
       this.user = res.user;
       await this.saveToken(res.token);
       return true;
-    } else{
-      return false;
+    } else {
+      final resBody = jsonDecode(response.body);
+      return resBody['msg'];
     }
   }
 

@@ -73,10 +73,10 @@ class _FormState extends State<Form> {
             name: "Ingresar",
             action: authService.authenticate ?  null : () async {
                 FocusScope.of(context).unfocus();
-                bool response = await authService.login(emailController.text.trim(), passwordController.text.trim());
+                final response = await authService.login(emailController.text.trim(), passwordController.text.trim());
 
                 if(!response) {
-                  showAler(context,"Login no valido!!", "Revisa los datos de ingreso");
+                  showAler(context,"Login no valido!!", response);
                 } else {
                   Navigator.pushReplacementNamed(context, "users");
                 }
