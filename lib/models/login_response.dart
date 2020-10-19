@@ -14,26 +14,26 @@ class LoginResponse {
     LoginResponse({
         this.ok,
         this.msg,
-        this.userDb,
+        this.user,
         this.token,
     });
 
     bool ok;
     String msg;
-    User userDb;
+    User user;
     String token;
 
     factory LoginResponse.fromJson(Map<String, dynamic> json) => LoginResponse(
         ok: json["ok"],
         msg: json["msg"],
-        userDb: User.fromJson(json["userDB"]),
+        user: User.fromJson(json["user"]),
         token: json["token"],
     );
 
     Map<String, dynamic> toJson() => {
         "ok": ok,
         "msg": msg,
-        "userDB": userDb.toJson(),
+        "user": user.toJson(),
         "token": token,
     };
 }
