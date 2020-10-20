@@ -5,8 +5,14 @@ class Logo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
+        margin: EdgeInsets.only(top: 100),
         child: Column(
-          children: <Widget>[Text("¿No tienes cuenta?")],
+          children: <Widget>[
+            Image.asset(
+              'assets/img/logo.png',
+              width: 200,
+            ),
+          ],
         ),
       ),
     );
