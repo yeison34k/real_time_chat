@@ -51,9 +51,9 @@ class AuthService with ChangeNotifier {
     return buildDataUser("/login/new", data);
   }
 
-
   Future buildDataUser(path, data) async {
-    final response = await http.post(Environment.api+path, body: jsonEncode(data), headers: {"Content-Type": "application/json"});
+    final response = await http.post(Environment.api + path,
+        body: jsonEncode(data), headers: {"Content-Type": "application/json"});
     this.authenticate = false;
     if (response.statusCode == 200) {
       final res = loginResponseFromJson(response.body);
@@ -61,8 +61,25 @@ class AuthService with ChangeNotifier {
       await this.saveToken(res.token);
       return true;
     } else {
-      final resBody = jsonDecode(response.body);
-      return resBody['msg'];
+      return false;
+    }
+  }
+
+  Future isLoggedIn() async {
+    final token = await _storage.read(key: "token");
+    final response = await http.get('${Environment.api}/login/newToken',
+        headers: {"Content-Type": "application/json", "x-token": token});
+
+    print(token);
+    print(response.body);
+    if (response.statusCode == 200) {
+      final res = loginResponseFromJson(response.body);
+      this.user = res.user;
+      await this.saveToken(res.token);
+      return true;
+    } else {
+      this.logout();
+      return false;
     }
   }
 

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:real_time_chat/models/user.dart';
+import 'package:real_time_chat/services/auth_service.dart';
 
 class UsuariosPage extends StatefulWidget {
   @override
@@ -19,11 +21,16 @@ class _UsuariosPageState extends State<UsuariosPage> {
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
+    final user = authService.user;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Mi nombre"),
+        title: Text(user.nombre.toString()),
         elevation: 1,
-        leading: IconButton(icon: Icon(Icons.exit_to_app), onPressed: null),
+        leading: IconButton(icon: Icon(Icons.exit_to_app), onPressed: (){
+          Navigator.pushReplacementNamed(context, 'login');
+          AuthService.deleteToken();
+        }),
       ),
       body: SmartRefresher(
         controller: _refreshController,
