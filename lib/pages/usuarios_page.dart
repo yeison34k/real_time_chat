@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+
 import 'package:real_time_chat/models/user.dart';
+
+import 'package:real_time_chat/services/user_service.dart';
 import 'package:real_time_chat/services/auth_service.dart';
+import 'package:real_time_chat/services/socket_service.dart';
 
 class UsuariosPage extends StatefulWidget {
   @override
@@ -10,34 +14,52 @@ class UsuariosPage extends StatefulWidget {
 }
 
 class _UsuariosPageState extends State<UsuariosPage> {
-  final users = [
-    User(uid: "1", nombre: "Juanito", email: "test@test.com", online: true),
-    User(uid: "2", nombre: "Lucho", email: "test@test.com", online: false),
-    User(uid: "3", nombre: "Maria", email: "test@test.com", online: true),
-  ];
+  final UserService userService = new UserService();
+  List<User> users = [];
 
-  RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
+  RefreshController _refreshController = RefreshController(initialRefresh: false);
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarUser();
+  }
 
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
+    final socketService = Provider.of<SocketService>(context);
+
     final user = authService.user;
     return Scaffold(
       appBar: AppBar(
         title: Text(user.nombre.toString()),
         elevation: 1,
-        leading: IconButton(icon: Icon(Icons.exit_to_app), onPressed: (){
-          Navigator.pushReplacementNamed(context, 'login');
-          AuthService.deleteToken();
-        }),
+        leading: IconButton(
+            icon: Icon(Icons.exit_to_app),
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, 'login');
+              AuthService.deleteToken();
+              socketService.disconnect();
+            }),
+        actions: <Widget>[
+          Container(
+            margin: EdgeInsets.only(right: 10),
+            child: socketService.serverStatus == ServerStatus.Online
+                ? Icon(Icons.check_circle, color: Colors.green)
+                : Icon(Icons.offline_bolt, color: Colors.red),
+          )
+        ],
       ),
       body: SmartRefresher(
         controller: _refreshController,
         onRefresh: _cargarUser,
         enablePullDown: true,
         header: WaterDropHeader(
-          complete: Icon(Icons.check, color: Colors.blue,),
+          complete: Icon(
+            Icons.check,
+            color: Colors.blue,
+          ),
           waterDropColor: Colors.blue[400],
         ),
         child: _userListView(),
@@ -55,23 +77,26 @@ class _UsuariosPageState extends State<UsuariosPage> {
 
   ListTile userListTile(User user) {
     return ListTile(
-              title: Text(user.nombre),
-              leading: CircleAvatar(
-                child: Text(user.nombre.substring(0, 2)),
-              ),
-              trailing: Container(
-                height: 10,
-                width: 10,
-                decoration: BoxDecoration(
-                    color: user.online ? Colors.green[100] : Colors.red,
-                    borderRadius: BorderRadius.circular(100)),
-              ),
-            );
+      title: Text(user.nombre),
+      leading: CircleAvatar(
+        child: Text(user.nombre.substring(0, 2)),
+      ),
+      trailing: Container(
+        height: 10,
+        width: 10,
+        decoration: BoxDecoration(
+            color: user.online ? Colors.green[100] : Colors.red,
+            borderRadius: BorderRadius.circular(100)),
+      ),
+    );
   }
 
   void _cargarUser() async {
-    await Future.delayed(Duration(milliseconds: 1000));
-    // if failed,use refreshFailed()
+    this.users = await userService.getAllUser();
+    setState(() {
+      
+    });
+    
     _refreshController.refreshCompleted();
   }
 }

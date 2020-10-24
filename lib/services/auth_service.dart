@@ -52,7 +52,7 @@ class AuthService with ChangeNotifier {
   }
 
   Future buildDataUser(path, data) async {
-    final response = await http.post(Environment.api + path,
+    final response = await http.post(Environment.apiLocal + path,
         body: jsonEncode(data), headers: {"Content-Type": "application/json"});
     this.authenticate = false;
     if (response.statusCode == 200) {
@@ -67,7 +67,7 @@ class AuthService with ChangeNotifier {
 
   Future isLoggedIn() async {
     final token = await _storage.read(key: "token");
-    final response = await http.get('${Environment.api}/login/newToken',
+    final response = await http.get('${Environment.apiLocal}/login/newToken',
         headers: {"Content-Type": "application/json", "x-token": token});
 
     print(token);

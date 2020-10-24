@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:real_time_chat/helpers/show_alert.dart';
+import 'package:real_time_chat/services/socket_service.dart';
 
 import 'package:real_time_chat/widgets/custom_buttom.dart';
 import 'package:real_time_chat/widgets/custom_input.dart';
@@ -53,6 +54,7 @@ class _FormState extends State<Form> {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
+    final socketService = Provider.of<SocketService>(context);
     return Container(
       margin: EdgeInsets.only(top: 40),
       padding: EdgeInsets.symmetric(horizontal: 30),
@@ -80,6 +82,7 @@ class _FormState extends State<Form> {
               FocusScope.of(context).unfocus();
               final response = await authService.register(nombreController.text.trim(), emailController.text.trim(), passwordController.text.trim());
               if(response == true) {
+                socketService.connect();
                   Navigator.pushReplacementNamed(context, "users");
                 } else {
                   showAler(context,"Usuario no valido!!", "revisa los datos ingresados!!");
