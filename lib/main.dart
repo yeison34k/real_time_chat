@@ -5,6 +5,7 @@ import 'package:real_time_chat/routes/routes.dart';
 
 import 'package:real_time_chat/services/auth_service.dart';
 import 'package:real_time_chat/services/socket_service.dart';
+import 'package:real_time_chat/services/chat_service.dart';
 
 void main() => runApp(MyApp());
 
@@ -15,6 +16,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthService()),
         ChangeNotifierProvider(create: (_) => SocketService()), 
+        ChangeNotifierProvider(create: (_) => ChatService()), 
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

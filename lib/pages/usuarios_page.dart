@@ -7,6 +7,7 @@ import 'package:real_time_chat/models/user.dart';
 import 'package:real_time_chat/services/user_service.dart';
 import 'package:real_time_chat/services/auth_service.dart';
 import 'package:real_time_chat/services/socket_service.dart';
+import 'package:real_time_chat/services/chat_service.dart';
 
 class UsuariosPage extends StatefulWidget {
   @override
@@ -88,6 +89,11 @@ class _UsuariosPageState extends State<UsuariosPage> {
             color: user.online ? Colors.green[100] : Colors.red,
             borderRadius: BorderRadius.circular(100)),
       ),
+      onTap: () {
+        final chatService = Provider.of<ChatService>(context, listen: false);
+        chatService.userTo = user;
+        Navigator.pushNamed(context, 'chat');
+      },
     );
   }
 

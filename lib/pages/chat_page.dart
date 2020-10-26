@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:real_time_chat/widgets/chat_message.dart';
+import 'package:real_time_chat/services/chat_service.dart';
+import 'package:real_time_chat/services/socket_service.dart';
+import 'package:real_time_chat/services/auth_service.dart';
 
 class ChatPage extends StatefulWidget {
   @override
@@ -10,11 +14,44 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   final _msgController = TextEditingController();
   final _focusNode = FocusNode();
+  ChatService chatService;
+  SocketService socketService;
+  AuthService authService;
   bool _escribiendo = false;
   List<ChatMessage> _messages = [];
 
   @override
+  void initState() {
+    super.initState();
+    this.chatService = Provider.of<ChatService>(context, listen: false);
+    this.socketService = Provider.of<SocketService>(context, listen: false);
+    this.authService = Provider.of<AuthService>(context, listen: false);
+
+    this.socketService.socket.on("personal-message", _listenMessage);
+    
+  }
+
+  void _listenMessage(dynamic payload) {
+    ChatMessage message = ChatMessage(
+      text: payload['message'],
+      uid: payload['from'],
+      animateControl: AnimationController(
+          vsync: this, 
+          duration: Duration(milliseconds: 400)
+        ),
+    );
+
+    setState(() {
+      _messages.insert(0, message);
+    });
+    
+    message.animateControl.forward();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final userTo = chatService.userTo;
+
     return Scaffold(
       appBar: AppBar(
           backgroundColor: Colors.white,
@@ -22,13 +59,13 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
           elevation: 1,
           title: Column(children: <Widget>[
             CircleAvatar(
-              child: Text("Ye", style: TextStyle(fontSize: 12)),
+              child: Text(userTo.nombre.substring(0, 2), style: TextStyle(fontSize: 12)),
               backgroundColor: Colors.blueAccent,
               maxRadius: 12,
             ),
             SizedBox(height: 3),
             Text(
-              "Yeison",
+              userTo.nombre,
               style: TextStyle(color: Colors.black, fontSize: 12),
             )
           ])),
@@ -106,7 +143,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
 
     final newMessage = ChatMessage(
       text: text,
-      uid: '123',
+      uid: authService.user.uid,
       animateControl: AnimationController(
           vsync: this, 
           duration: Duration(milliseconds: 400)
@@ -114,8 +151,12 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     );
     _messages.insert(0, newMessage);
     newMessage.animateControl.forward();
-    setState(() {
-      _escribiendo = false;
+    setState(() { _escribiendo = false; });
+
+    this.socketService.emit('personal-message', {
+      'from': authService.user.uid,
+      'to': chatService.userTo.uid,
+      'message': text
     });
   }
 
